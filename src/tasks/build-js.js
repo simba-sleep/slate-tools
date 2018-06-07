@@ -3,6 +3,7 @@ const uglify = require('gulp-uglify');
 const include = require('gulp-include');
 const plumber = require('gulp-plumber');
 const chokidar = require('chokidar');
+const ifEnv = require('gulp-if-env');
 
 const config = require('./includes/config.js');
 const messages = require('./includes/messages.js');
@@ -13,6 +14,11 @@ function processThemeJs() {
   return gulp.src([config.roots.js, `!${config.roots.vendorJs}`])
     .pipe(plumber(utils.errorHandler))
     .pipe(include())
+    .pipe(ifEnv('production', uglify({
+      mangle: true,
+      compress: true,
+      preserveComments: 'license',
+    })))
     .pipe(gulp.dest(config.dist.assets));
 }
 
